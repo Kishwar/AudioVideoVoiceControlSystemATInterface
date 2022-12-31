@@ -3,10 +3,103 @@
 //
 
 #include <Arduino.h>
+#include "freertos/FreeRTOS.h"
 #include "at_list.h"
+
+#include <memory>
+#include <mutex>
+
+std::mutex g_i_mutex;
+
+class Entity {
+  int m_Size;
+public:
+  Entity(int size = 0) : m_Size {size} {
+    Serial.println("Entity Constructor");
+  }
+
+  ~Entity() {
+    Serial.println("Entity Destructor");
+  }
+};
+
+/* Task to be created. */
+void vTaskCode1(void *pvParameters)
+{
+  int counter = 0;
+  while(true)
+  {
+    g_i_mutex.lock();
+    std::string str = "TASK: " + std::to_string((uint32_t) pvParameters) + " COUNTER: " + std::to_string(counter++);
+    Serial.println(str.c_str());
+    g_i_mutex.unlock();
+    delay(1000);
+  }
+}
+
+void vTaskCode2(void *pvParameters)
+{
+  int counter = 0;
+  while(true)
+  {
+    g_i_mutex.lock();
+    std::string str = "TASK: " + std::to_string((uint32_t) pvParameters) + " COUNTER: " + std::to_string(counter++);
+    Serial.println(str.c_str());
+    g_i_mutex.unlock();
+    delay(1000);
+  }
+}
+
+void vTaskCode3(void *pvParameters)
+{
+  int counter = 0;
+  while(true)
+  {
+    g_i_mutex.lock();
+    std::string str = "TASK: " + std::to_string((uint32_t) pvParameters) + " COUNTER: " + std::to_string(counter++);
+    Serial.println(str.c_str());
+    g_i_mutex.unlock();
+    delay(1000);
+  }
+}
 
 void setup() {
   // put your setup code here, to run once:
+  Serial.begin(115200);
+
+  {
+    std::unique_ptr<Entity> unique =  std::make_unique<Entity>();
+  }
+
+  BaseType_t xReturned;
+TaskHandle_t xHandle1 = NULL, xHandle2 = NULL, xHandle3 = NULL;
+
+    /* Create the task, storing the handle. */
+    xReturned = xTaskCreate(
+                    vTaskCode1,       /* Function that implements the task. */
+                    "NAME1",          /* Text name for the task. */
+                    4096,      /* Stack size in words, not bytes. */
+                    ( void * ) 1,    /* Parameter passed into the task. */
+                    tskIDLE_PRIORITY,/* Priority at which the task is created. */
+                    &xHandle1 );      /* Used to pass out the created task's handle. */
+
+    /* Create the task, storing the handle. */
+    xReturned = xTaskCreate(
+                    vTaskCode2,       /* Function that implements the task. */
+                    "NAME2",          /* Text name for the task. */
+                    4096,      /* Stack size in words, not bytes. */
+                    ( void * ) 2,    /* Parameter passed into the task. */
+                    tskIDLE_PRIORITY,/* Priority at which the task is created. */
+                    &xHandle2 );      /* Used to pass out the created task's handle. */
+
+    /* Create the task, storing the handle. */
+    xReturned = xTaskCreate(
+                    vTaskCode3,       /* Function that implements the task. */
+                    "NAME3",          /* Text name for the task. */
+                    4096,      /* Stack size in words, not bytes. */
+                    ( void * ) 3,    /* Parameter passed into the task. */
+                    tskIDLE_PRIORITY,/* Priority at which the task is created. */
+                    &xHandle3 );      /* Used to pass out the created task's handle. */
 }
 
 void loop() {
