@@ -17,22 +17,36 @@
 
 Uart* Uart::getInstance(void) {
 
-  if(m_Instance == nullptr) {
-    m_Instance = new Uart();
+  static Uart *instance = nullptr;
+
+  if(instance == nullptr) {
+    instance = new Uart();
     initUartThread();
   }
 
-  return m_Instance;
+  return instance;
 }
 
 void Uart::setBaud(uint32_t baud) {
   m_Baud = baud;
+  Serial.flush();
+  Serial.end();
+  Serial.begin(m_Baud);
 }
 
 void Uart::initUartThread(void) {
-
+  assert(xTaskCreate(
+              uartThread,              /* Function that implements the task. */
+              "SerialThread",          /* Text name for the task. */
+              4096,                    /* Stack size in words, not bytes. */
+              NULL,                    /* Parameter passed into the task. */
+              tskIDLE_PRIORITY,        /* Priority at which the task is created. */
+              NULL) == pdPASS && "initUartThread failed.");
 }
 
 void Uart::uartThread(void *pvParam) {
-  
+ while(true)
+  {
+    delay(1000);
+  }
 }

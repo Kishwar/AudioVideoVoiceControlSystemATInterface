@@ -66,7 +66,6 @@ void vTaskCode3(void *pvParameters)
 
 void setup() {
   // put your setup code here, to run once:
-  Serial.begin(115200);
 
   {
     std::unique_ptr<Entity> unique =  std::make_unique<Entity>();
