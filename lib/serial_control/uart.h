@@ -17,15 +17,16 @@ class Uart {
   uint32_t m_Baud;
 
 public:
-  static Uart* getInstance(void);
+  static Uart& getInstance(void);
+  static QueueHandle_t& getQueueHandle(void);
   void setBaud(uint32_t baud);
 
   Uart(const Uart&) = delete;     // copy constructor deleted
   Uart(const Uart&&) = delete;    // move constructor deleted
 
 private:
-	static void initUartThread(void);
-	static void uartThread(void *pvParam);
+	static void initUartThread(void) noexcept;
+	static void uartThread(void *pvParam) noexcept;
   Uart(uint32_t baud = 115200) : m_Baud{baud} {
     Serial.begin(m_Baud);
   }

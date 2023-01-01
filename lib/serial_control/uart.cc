@@ -16,16 +16,16 @@
 #include <stdexcept>
 #include <string>
 
-Uart* Uart::getInstance(void) {
+static QueueHandle_t *qHandle = nullptr;
+static Uart *instance = nullptr;
 
-  static Uart *instance = nullptr;
-
+Uart& Uart::getInstance(void) {
   if(instance == nullptr) {
     instance = new Uart();
     initUartThread();
   }
 
-  return instance;
+  return *instance;
 }
 
 void Uart::setBaud(uint32_t baud) {
@@ -35,23 +35,34 @@ void Uart::setBaud(uint32_t baud) {
   Serial.begin(m_Baud);
 }
 
-void Uart::initUartThread(void) {
+void Uart::initUartThread(void) noexcept {
   try {
-    CreateTask(uartThread, "SerialThread");
+    
+    CreateTask(uartThread, "SerialThread");     // Create UART task
+    CreateQueue(getQueueHandle(), 1, 1);        // Create UART queue
   }
   catch(std::runtime_error& e) {
     std::string err = std::string("Terminating system, UART exception: ") + std::string(e.what());
     Serial.println(err.c_str());
     std::terminate();
   }
-  catch(...) {
-    Serial.println("Unknown exception caught. Serial port not available");
+  catch(std::exception& e) {
+    std::string err = std::string("Unknown exception caught. \
+                            Serial port not available, UART exception: ") + std::string(e.what());
+    Serial.println(err.c_str());
     Serial.flush();
     Serial.end();
   }
 }
 
-void Uart::uartThread(void *pvParam) {
+QueueHandle_t& Uart::getQueueHandle(void) {
+  if(qHandle == nullptr) {
+    qHandle = new QueueHandle_t();
+  }
+  return *qHandle;
+}
+
+void Uart::uartThread(void *pvParam) noexcept {
  while(true)
   {
     delay(1000);

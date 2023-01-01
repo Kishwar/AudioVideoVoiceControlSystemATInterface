@@ -66,7 +66,8 @@ void vTaskCode3(void *pvParameters)
 
 void setup() {
   // put your setup code here, to run once:
-  Uart* inst1 = Uart::getInstance();
+  Uart& inst1 = Uart::getInstance();
+  inst1.getQueueHandle();
 
   {
     std::unique_ptr<Entity> unique =  std::make_unique<Entity>();

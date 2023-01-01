@@ -40,3 +40,9 @@ void CreateTaskCore(const TaskFunction_t &func, std::string&& name, uint8_t core
     throw std::runtime_error("Unable to create Task thread");
   }
 }
+
+void CreateQueue(QueueHandle_t& queue, uint32_t length, uint32_t size) {
+  if(length == 0 || size == 0 || (queue = xQueueCreate(length, size)) == NULL) {
+    throw std::runtime_error("Unable to create queue");
+  }
+}
