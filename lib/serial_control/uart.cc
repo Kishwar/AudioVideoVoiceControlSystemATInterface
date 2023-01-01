@@ -13,7 +13,8 @@
 #include "core.h"
 #include "uart.h"
 
-#include "freertos/FreeRTOS.h"
+#include <stdexcept>
+#include <string>
 
 Uart* Uart::getInstance(void) {
 
@@ -35,13 +36,19 @@ void Uart::setBaud(uint32_t baud) {
 }
 
 void Uart::initUartThread(void) {
-  assert(xTaskCreate(
-              uartThread,              /* Function that implements the task. */
-              "SerialThread",          /* Text name for the task. */
-              4096,                    /* Stack size in words, not bytes. */
-              NULL,                    /* Parameter passed into the task. */
-              tskIDLE_PRIORITY,        /* Priority at which the task is created. */
-              NULL) == pdPASS && "initUartThread failed.");
+  try {
+    CreateTask(uartThread, "SerialThread");
+  }
+  catch(std::runtime_error& e) {
+    std::string err = std::string("Terminating system, UART exception: ") + std::string(e.what());
+    Serial.println(err.c_str());
+    std::terminate();
+  }
+  catch(...) {
+    Serial.println("Unknown exception caught. Serial port not available");
+    Serial.flush();
+    Serial.end();
+  }
 }
 
 void Uart::uartThread(void *pvParam) {
