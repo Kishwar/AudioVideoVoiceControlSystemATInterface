@@ -22,10 +22,13 @@ static Uart *instance = nullptr;
 Uart& Uart::getInstance(void) {
   if(instance == nullptr) {
     instance = new Uart();
-    initUartThread();
   }
 
   return *instance;
+}
+
+void Uart::run(void) {
+  initUartThread();
 }
 
 void Uart::setBaud(uint32_t baud) {
@@ -65,6 +68,7 @@ QueueHandle_t& Uart::getQueueHandle(void) {
 void Uart::uartThread(void *pvParam) noexcept {
  while(true)
   {
-    delay(1000);
+    delay(10);
+    Serial.println("Waiting for AT command..");
   }
 }

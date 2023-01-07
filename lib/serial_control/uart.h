@@ -20,6 +20,7 @@ public:
   static Uart& getInstance(void);
   static QueueHandle_t& getQueueHandle(void);
   void setBaud(uint32_t baud);
+  void run(void);
 
   Uart(const Uart&) = delete;     // copy constructor deleted
   Uart(const Uart&&) = delete;    // move constructor deleted
