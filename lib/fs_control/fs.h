@@ -20,5 +20,5 @@ public:
   FileSystem(const FileSystem&&) = delete;    // move constructor deleted
 
 private:
-  FileSystem();
+  FileSystem() {};
 };

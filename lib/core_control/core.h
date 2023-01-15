@@ -24,7 +24,7 @@
  * 
  * exception: throws runtime_error exception
 */
-void CreateTask(const TaskFunction_t& func, std::string&& name, uint32_t stack = 4096);
+void CreateTask(const TaskFunction_t& func, std::string&& name, void *param, uint32_t stack = 4096);
 
 /**
  * Creates a freeRTOS task assigned to defined core
@@ -36,7 +36,7 @@ void CreateTask(const TaskFunction_t& func, std::string&& name, uint32_t stack =
  * 
  * exception: throws runtime_error exception
 */
-void CreateTaskCore(const TaskFunction_t& func, std::string&& name, uint8_t core, uint32_t stack = 4096);
+void CreateTaskCore(const TaskFunction_t& func, std::string&& name, void *param, uint8_t core, uint32_t stack = 4096);
 
 /**
  * Creates a freeRTOS queue

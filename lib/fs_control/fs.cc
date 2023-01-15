@@ -11,6 +11,7 @@
  */
 
 #include "fs.h"
+#include "fs_msg.h"
 
 static FileSystem *instance = nullptr;
 
@@ -23,5 +24,5 @@ FileSystem& FileSystem::getInstance() {
 }
 
 void FileSystem::run(void) {
-  
+
 }

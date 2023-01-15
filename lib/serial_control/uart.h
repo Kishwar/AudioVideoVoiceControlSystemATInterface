@@ -26,10 +26,12 @@ public:
   Uart(const Uart&&) = delete;    // move constructor deleted
 
 private:
-	static void initUartThread(void) noexcept;
-	static void uartThread(void *pvParam) noexcept;
+	static void initUartThread() noexcept;
+	static void uartThreadRecv(void *pvParam) noexcept;
+  static void uartThreadSend(void *pvParam) noexcept;
   Uart(uint32_t baud = 115200) : m_Baud{baud} {
     Serial.begin(m_Baud);
+    Serial.setTimeout(20000);
   }
   ~Uart() {
     Serial.flush();

@@ -9,11 +9,15 @@
  */
 
 #include <Arduino.h>
+#include <soc/rtc_wdt.h>
 
 #include "uart.h"
 #include "fs.h"
 
 void setup() {
+
+  rtc_wdt_protect_off();
+  rtc_wdt_disable();
 
   // trigger run UART
   Uart::getInstance().run();
